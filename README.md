@@ -17,7 +17,7 @@ This Solidity smart contract facilitates a bidding process where users can place
 
 # 🚀 Implementation Details
 
-Built on Solidity 0.8.x, this contract leverages mappings, structs, and arrays for efficient data handling. It prioritizes security by mitigating overflow risks and enforcing proper bid validations.
+Built on Solidity 0.8.0, this contract leverages mappings, structs, and arrays for efficient data handling. It prioritizes security by mitigating overflow risks and enforcing proper bid validations.
 
 # 🔄 State Variables
 
