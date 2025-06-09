@@ -26,6 +26,8 @@ The contract includes several key variables that store auction-related data:
 1. **General Variables**
 - **`owner (address)`** Stores the contract owner's address.
 
+- **`objectValue (address)`** Value of the auctions object.
+
 - **`auctionEndTime (uint256)`** Timestamp indicating when the auction ends.
 
 - **`highestBid (uint256)`** Current highest bid amount.
