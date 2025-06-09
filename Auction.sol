@@ -9,6 +9,9 @@ contract Auction {
     // Address of the contract owner.
     address public owner;
 
+    //Initial value of the object.
+    uint256 public objectValue;
+
     // Time when the auction ends.
     uint256 public auctionEndTime;
 
@@ -115,9 +118,10 @@ contract Auction {
     ======CONSTRUCTOR======
     */
 
-    constructor(uint256 _durationInMinutes) {
+    constructor(uint256 _durationInMinutes, uint256 _initialValue) {
         require(_durationInMinutes > 0, "Duration must be greater than 0.");
         owner = payable(msg.sender);
+        objectValue = _initialValue;
         auctionEndTime = block.timestamp + (_durationInMinutes * 1 minutes);
     }
 
