@@ -48,7 +48,7 @@ contract Auction {
     event Withdraw(address indexed to, uint256 amount);
     event Paused(bool status);
     event EmergencyWithdraw(address indexed to, uint256 amount);
-
+    
     /* ====== MODIFIERS ====== */
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -200,6 +200,47 @@ contract Auction {
         emit Refund(msg.sender, amount - fee);
     }
 
+    /**
+     * @notice Refund all non-winning bids in batch
+     * @dev Iterates through all bidders and refunds their deposits (minus commission)
+    */
+    function refundAllNonWinners() external onlyOwner whenEnded {
+        require(!ended, "Auction already ended");
+        ended = true;
+    
+        // Calculate owner's share (winning bid minus commission)
+        uint256 commission = (highestBid * COMMISSION_PERCENT) / 100;
+        uint256 ownerShare = highestBid - commission;
+    
+        // Transfer owner's share
+        if (ownerShare > 0) {
+        payable(owner).transfer(ownerShare);
+        }
+    
+        // Process refunds for all non-winning bidders
+        for (uint256 i = 0; i < bidders.length; i++) {
+        address bidder = bidders[i];
+        
+        // Skip the winner and bidders with no deposit
+        if (bidder == highestBidder || deposits[bidder] == 0) {
+            continue;
+        }
+        
+        uint256 amount = deposits[bidder];
+        deposits[bidder] = 0; // Prevent reentrancy
+        
+        // Calculate commission fee
+        uint256 fee = (amount * COMMISSION_PERCENT) / 100;
+        uint256 refundAmount = amount - fee;
+        
+        // Transfer refund
+        payable(bidder).transfer(refundAmount);
+        emit Refund(bidder, refundAmount);
+        }
+    
+        emit AuctionEnded(highestBidder, highestBid);
+    }
+    
     /* ====== VIEW FUNCTIONS ====== */
     /**
      * @notice Get auction winner info
