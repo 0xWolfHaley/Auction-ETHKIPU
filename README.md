@@ -64,25 +64,94 @@ The contract emits events to notify external applications about important action
 
 - **`RefundBids(address indexed beneficiary, uint256 amount)`** Emitted when refunds are processed for bidders who did not win.
 
-# 🔍 Core Functions
+# 🔍 Core Functions 
+
+1. **🔄 Bid Management**
 
 **`bid()`**
-Allows users to place bids. Each bid must exceed the current highest bid by at least 5%.
+
+  - Places a new bid in the auction
+
+  - **Requires:**
+
+    - Bid value ≥ current highest + 5%
+
+    - Auction must be active
+
+  - **Emits:** **`BidPlaced`**
+
+**`_minBid() private view → (uint256)`**
+
+  - Calculates minimum acceptable bid
+
+  - **Returns:** Minimum bid amount (current highest + 5%)
+
+2. **⏹️ Auction Control**
 
 **`endAuction()`**
-Terminates the auction once the designated time has expired and prevents further bidding.
 
-**`auctionWinner()`**
-Returns the auction winner's address and the final bid amount.
+  - Officially ends auction and distributes winning bid
 
-**`showBids()`**
-Displays all participants and their respective bids.
+  - **Requires:**
 
-**`returnDeposits()`**
-Enables bidders to withdraw their deposits minus a 2% commission. ⚠️ The auction winner is excluded from refunds.
+    - Owner only
 
-**`partialWithdrawal()`**
-Allows users to withdraw excess funds during the auction.
+    - Auction time expired
+
+  - **Emits:** **`AuctionEnded`**
+
+**`refundAllNonWinners()`**
+
+  - Processes refunds for all non-winning bidders (minus 2% fee)
+
+  - **Emits:** **`Refund for each processed bid`**
+
+3. **💰 Withdrawals**
+    
+**`withdrawExcess(uint256 _amount)`**
+
+  - Allows partial withdrawal of excess funds during auction
+
+  - **Parameters:**
+
+    - **`_amount: Amount to withdraw`**
+
+**`claimRefund()`**
+
+  - Lets non-winning bidders claim refund after auction ends
+
+  - **Deducts:** 2% commission fee
+
+4. **👑 Owner Functions**
+   
+**`setPaused(bool _paused)`**
+
+  - Pauses/unpauses the auction
+
+  - **Emits:** **`Paused`**
+
+**`emergencyWithdraw(uint256 _amount)`**
+
+  - Owner-only emergency ETH recovery
+
+  - **For:** Stuck funds only
+
+5. **🔍 View Functions**
+**`getWinner() → (address winner, uint256 amount)`**
+
+  - Returns auction winner information
+
+**`getAllBids() → (Bid[] memory)`**
+
+  - Returns complete bid history
+
+**`getUserBids(address _bidder) → (UserBid[] memory)`**
+
+  - Returns specific user's bid history
+
+**`getAllBidders() → (address[] memory)`**
+
+  -Returns list of all participants
 
 # 📜 License
 This contract is licensed under MIT.
